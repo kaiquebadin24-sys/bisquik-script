@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala do Futuro - Autopilot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 520px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        input, select, button {
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+        }
+        button {
+            background: #ff4757;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover { background: #ff3742; transform: scale(1.03); }
+        h1 { text-align: center; font-size: 28px; }
+        .status { margin-top: 20px; padding: 15px; border-radius: 12px; text-align: center; display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Sala do Futuro - Autopilot</h1>
+        
+        <input type="text" id="ra" placeholder="Digite seu RA" maxlength="20">
+        <input type="password" id="senha" placeholder="Digite sua senha">
+        
+        <select id="tempo">
+            <option value="20">20 minutos</option>
+            <option value="30">30 minutos</option>
+            <option value="45" selected>45 minutos</option>
+            <option value="60">60 minutos</option>
+            <option value="90">90 minutos</option>
+        </select>
+        
+        <button onclick="iniciar()">INICIAR AUTOPILOT</button>
+        
+        <div id="status" class="status"></div>
+    </div>
+
+    <script>
+        async function iniciar() {
+            const ra = document.getElementById('ra').value.trim();
+            const senha = document.getElementById('senha').value;
+            const tempo = document.getElementById('tempo').value;
+            const status = document.getElementById('status');
+
+            if (!ra || !senha) {
+                alert("❌ Preencha RA e Senha!");
+                return;
+            }
+
+            status.style.display = 'block';
+            status.style.background = '#4CAF50';
+            status.textContent = '🚀 Iniciando autopilot... Aguarde';
+
+            try {
+                const res = await fetch('/iniciar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ra, senha, tempo })
+                });
+                const data = await res.json();
+                status.textContent = data.mensagem;
+            } catch (e) {
+                status.style.background = '#f44336';
+                status.textContent = '❌ Erro ao conectar com o servidor.';
+            }
+        }
+    </script>
+</body>
+</html>
